@@ -29,7 +29,7 @@ class ModuleMake extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create module by providing a module name with optional parameters of creating following instances: migration, vue component, view (blade), controller, model or api controller';
 
     /**
      * Create a new command instance.
@@ -337,7 +337,7 @@ class ModuleMake extends Command
 
     private function makeDirectory($path): void
     {
-        if (! $this->files->isDirectory(dirname($path))) {
+        if (!$this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0777, true, true);
         }
 
