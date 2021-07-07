@@ -9,12 +9,15 @@ return [
             'api' => ['auth.api'],
         ]
     ],
+
     'modules' => [
         'Admin' => [
-            'User'
-        ],
-        'Pub' => [
-            'Auth'
-        ],
+                'Dashboard',
+                'User'
+            ],
+            'Pub' => [
+                'Auth'
+            ],
     ]
+
 ];
