@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\Localization\LocalizationServiceProvider;
+
 return [
 
     /*
@@ -81,6 +83,7 @@ return [
     */
 
     'locale' => 'en',
+    'locales' => ['en', 'ru'],
 
     /*
     |--------------------------------------------------------------------------
@@ -161,7 +164,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        LocalizationServiceProvider::class,
         /*
          * Package Service Providers...
          */
