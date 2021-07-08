@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Menu;
+use App\Modules\Admin\Menu\Models\Menu as MenuModel;
 
 class Base extends Controller
 {
@@ -31,9 +33,10 @@ class Base extends Controller
 
     protected function renderOutput() {
         $this->vars = Arr::add($this->vars, 'content', $this->content);
-        dd($this->locale);
+        $menu = $this->getMenu();
+
         $this->sidebar = view('Admin::layouts.includes.sidebar')->with([
-            'menu' => '',
+            'menu' => $menu,
             'user' =>$this->user
         ]);
         $this->vars = Arr::add($this->vars,'sidebar', $this->sidebar);
@@ -42,6 +45,36 @@ class Base extends Controller
     }
 
     private function getMenu() {
+        return Menu::make('menuRenderer', function($m) {
+            foreach (MenuModel::menuByType(MenuModel::MENU_TYPE_ADMIN)->get() as $item) {
+                $path = $item->path;
+                if ($path && $this->checkRoute($path)) {
+                    $path = route($path);
+                }
 
+                if ($item->parent == 0) {
+                    $m->add($item->title, $path)->id($item->id)->data('permissions', []);
+                }
+                else {
+                    if ($m->find($item->parent)) {
+                        $m->find($item->parent)->add($item->title, $path)->id($item->id)->data('permissions', []);
+                    }
+
+                }
+
+            }
+
+        })->filter(function($item) {
+            return true;
+        });
+    }
+    private function checkRoute($path) {
+        $routes = \Route::getRoutes()->getRoutes();
+        foreach ($routes as $route) {
+            if ($route->getName() == $path) {
+                return true;
+            }
+        }
+        return false;
     }
 }
