@@ -12,12 +12,13 @@ return [
 
     'modules' => [
         'Admin' => [
-                'Menu',
-                'Dashboard',
-                'User'
-            ],
-            'Pub' => [
-                'Auth'
-            ],
+            'Role',
+            'Menu',
+            'Dashboard',
+            'User'
+        ],
+        'Pub' => [
+            'Auth'
+        ],
     ]
 ];
