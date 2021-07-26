@@ -4,13 +4,21 @@
 namespace App\Modules\Admin\User\Services;
 
 
+use App\Modules\Admin\Role\Models\Role;
 use App\Modules\Admin\User\Models\User;
+use App\Modules\Admin\User\Requests\UserRequest;
+use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function getUsers()
+    public function getUsers($status = false)
     {
-        $users = User::with('roles')->get();
+
+        $usersBuilder = User::with('roles');
+        if ($status) {
+            $usersBuilder->where('status',(string)$status);
+        }
+        $users = $usersBuilder->get();
         $users->transform(function($item) {
             $item->rolename = "";
             if (isset($item->roles)) {
@@ -20,5 +28,18 @@ class UserService
         });
 
         return $users;
+    }
+
+    public function save(UserRequest $request, User $user) {
+        $user->fill($request->only($user->getFillable()));
+        $user->password = Hash::make($request->password);
+        $user->status = '1';
+        $user->save();
+
+        $role = Role::findOrFail($request->role_id);
+        $user->roles()->sync($role->id);
+        $user->rolename = $role->title;
+
+        return $user;
     }
 }
