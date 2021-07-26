@@ -3,14 +3,22 @@
 
 namespace App\Modules\Admin\Role\Services;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Client\Request;
+use App\Modules\Admin\Role\Models\Role;
+use Illuminate\Http\Request;
 
 class PermissionsService
 {
-    public function save(Request $request, Model $model): bool {
-//        $model->fill($request->only($model->getFillable()));
-//        $model->save();
+    public function save(Request $request): bool {
+        $data = $request->except('_token');
+        $roles = Role::all();
+
+        foreach ($roles as $role) {
+            if (isset($data[$role->id])) {
+                $role->savePermissions($data[$role->id]);
+            } else {
+                $role->savePermissions([]);
+            }
+        }
         return true;
     }
 }

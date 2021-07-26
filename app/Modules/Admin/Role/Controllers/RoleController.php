@@ -20,6 +20,7 @@ class RoleController extends Base
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function index()
     {
@@ -34,12 +35,14 @@ class RoleController extends Base
         return $this->renderOutput();
     }
 
+
     /**
-     * Create of the resource.
+     * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function create()
+    public function create(): \Illuminate\Http\Response
     {
         $this->authorize('create', Role::class);
 
@@ -52,7 +55,7 @@ class RoleController extends Base
         return $this->renderOutput();
     }
 
-    public function store(RoleRequest $request)
+    public function store(RoleRequest $request): \Illuminate\Http\RedirectResponse
     {
         $this->service->save($request, new Role());
         return Redirect::route('roles.index');

@@ -32,11 +32,30 @@ class Role extends Model
     }
 
     public function savePermissions($perms) {
-        if (!empty($perms)) {
+       if (!empty($perms)) {
             $this->permissions()->sync($perms);
         } else {
             $this->permissions()->detach();
         }
     }
 
+    public function hasPermission($alias, $require = false)
+    {
+        if (is_array($alias)) {
+            foreach ($alias as $permissionAlias) {
+                $hasPermissions = $this->hasPermission($permissionAlias);
+                if ($hasPermissions && !$require) {
+                    return true;
+                } else if (!$hasPermissions && $require) {
+                    return false;
+                }
+            }
+        } else {
+            foreach ($this->permissions as $permission) {
+                if ($permission->alias == $alias) {
+                    return true;
+                }
+            }
+        }
+    }
 }

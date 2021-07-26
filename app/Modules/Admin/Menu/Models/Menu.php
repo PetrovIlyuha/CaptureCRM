@@ -2,6 +2,7 @@
 
 namespace App\Modules\Admin\Menu\Models;
 
+use App\Modules\Admin\Role\Models\Permission;
 use App\Modules\Admin\User\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +14,21 @@ class Menu extends Model
     const MENU_TYPE_FRONT = 'front';
     const MENU_TYPE_ADMIN = 'admin';
 
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_menu');
+    }
+
+
+
     public static function scopeFrontMenu($query, User $user) {
-        return $query->where('type', self::MENU_TYPE_FRONT);
-//            ->whereHas('perms', function($q) use($user) {
-//
-//            });
+        return $query->where('type', self::MENU_TYPE_FRONT)
+            ->whereHas('permissions', function($q) use($user) {
+                $arr = collect($user->getMergedPermissions())->map(function($item) {
+                    return $item['id'];
+                });
+                $q->whereIn('id', $arr->toArray());
+            });
     }
 
     public static function scopeMenuByType($query, $type) {

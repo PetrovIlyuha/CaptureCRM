@@ -47,15 +47,17 @@ class PermissionsController extends Base
         //
     }
 
+
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        //
+        $this->authorize('create', Role::class);
+        $this->service->save($request);
+        return back()->with([
+            'message' => "Your\'ve assigned new set of permissions to existing roles!"
+        ]);
     }
 
     /**
