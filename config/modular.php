@@ -15,7 +15,8 @@ return [
             'Role',
             'Menu',
             'Dashboard',
-            'User'
+            'User',
+            'Sources'
         ],
         'Pub' => [
             'Auth'
